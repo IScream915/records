@@ -33,7 +33,7 @@ sudo docker logs -f zookeeper
 #### 由于kafka的更新迭代, 在 3.7 及以上版本的kafka都会默认启用KRaft模式, 而且无法关闭, 但 3.4 系列仍保留对 zookeeper 的完整支持, 因此这里我们需要部署 3.4 版本的kafka container才能正常的运行
 
 sudo docker run -d --name kafka &#92; \
---network zookeeper-kakfa &#92; \
+--network zookeeper-kafka &#92; \
 -p 9092:9092 &#92; \
 -e ALLOW_PLAINTEXT_LISTENER=yes &#92; \
 -e KAFKA_ENABLE_KRAFT=no &#92; \
