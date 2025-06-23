@@ -61,9 +61,9 @@ sudo docker run -d --name kafka-map &#92; \
 
 部署完成之后按照以下顺序执行代码, 启用kafka服务:
 
-sudo docker run zookeeper \
-sudo docker run kafka \
-sudo docker run kafka-map 
+sudo docker start zookeeper \
+sudo docker start kafka \
+sudo docker start kafka-map 
 
 之后你可以在你的本地通过
 
