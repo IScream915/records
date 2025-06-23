@@ -41,6 +41,10 @@ sudo docker run -d --name kafka &#92; \
 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://你虚拟机的IP地址:9092 &#92; \
 bitnami/kafka:3.4
 
+#### 在启用kafka服务之后需要在虚拟机中开放防火墙对9092端口的访问限制
+
+sudo ufw allow 9092/tcp
+
 #### 在部署完成kafka container之后可以通过以下指令来验证kafka服务是否已经启用
 
 sudo docker logs -f kafka
