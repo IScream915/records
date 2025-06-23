@@ -1,4 +1,4 @@
-## 本指南将逐步介绍如何在一台ubuntu虚拟机中部署一个包含zookeeper的kafka服务
+## 本教程将逐步介绍如何在一台ubuntu虚拟机中部署一个包含zookeeper的kafka服务
 
 ### 一. 部署环境
 #### 1. 示例系统: ubuntu 24.04 LTS
@@ -33,7 +33,7 @@ sudo docker logs -f zookeeper
 #### 由于kafka的更新迭代, 在 3.7 及以上版本的kafka都会默认启用KRaft模式, 而且无法关闭, 但 3.4 系列仍保留对 zookeeper 的完整支持, 因此这里我们需要部署 3.4 版本的kafka container才能正常的运行
 
 sudo docker run -d --name kafka &#92; \
---network kafka-zookeeper &#92; \
+--network zookeeper-kakfa &#92; \
 -p 9092:9092 &#92; \
 -e ALLOW_PLAINTEXT_LISTENER=yes &#92; \
 -e KAFKA_ENABLE_KRAFT=no &#92; \
@@ -51,7 +51,7 @@ sudo docker logs -f kafka
 #### 这个管理工具可以用图形化界面来管理kafka, 让调试, 观测, 操作kafka变得更加的简单, 非常的建议安装
 
 sudo docker run -d --name kafka-map &#92; \
---network kafka-zookeeper &#92; \
+--network zookeeper-kafka &#92; \
 -p 9001:8080 &#92; \
 -v /opt/kafka-map/data:/usr/local/kafka-map/data &#92; \
 -e DEFAULT_USERNAME=你自定义的用户名 &#92; \
