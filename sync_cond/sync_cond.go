@@ -5,19 +5,19 @@ import (
 	"sync"
 )
 
-type buffer struct {
+type Buffer struct {
 	mtx   *sync.Mutex
 	cond  *sync.Cond
 	data  []int
 	limit int
 }
 
-func NewBuffer() *buffer {
+func NewBuffer() *Buffer {
 	mtx := &sync.Mutex{}
-	return &buffer{mtx, sync.NewCond(mtx), make([]int, 0), 10}
+	return &Buffer{mtx, sync.NewCond(mtx), make([]int, 0), 10}
 }
 
-func (b *buffer) Producer(value, i int) error {
+func (b *Buffer) Producer(value, i int) error {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()
 
@@ -38,7 +38,7 @@ func (b *buffer) Producer(value, i int) error {
 	return nil
 }
 
-func (b *buffer) Consumer(i int) int {
+func (b *Buffer) Consumer(i int) int {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()
 

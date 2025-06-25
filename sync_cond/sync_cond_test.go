@@ -2,6 +2,7 @@ package synccond
 
 import (
 	"math/rand"
+	"sync"
 	"testing"
 	"time"
 )
@@ -11,22 +12,31 @@ func TestBuffer(t *testing.T) {
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
+	wg := &sync.WaitGroup{}
+
 	// 生产者
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for i := 0; i < 50; i++ {
-			buffer.Producer(r.Intn(100), i)
-			// time.Sleep(time.Millisecond * 500)
+			if err := buffer.Producer(r.Intn(100), i); err != nil {
+				t.Error(err)
+			}
+			time.Sleep(time.Millisecond * 100)
 		}
 
 	}()
 
 	// 消费者
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for i := 0; i < 50; i++ {
 			buffer.Consumer(i)
-			// time.Sleep(time.Millisecond * 500)
+			time.Sleep(time.Millisecond * 300)
 		}
 	}()
 
-	time.Sleep(time.Second * 20)
+	wg.Wait()
+
 }
