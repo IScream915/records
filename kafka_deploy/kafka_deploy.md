@@ -9,22 +9,22 @@
 
 这里我们创建一个名为zookeeper-kafka的桥接网络用于zookeeper和kafka通讯
 
-sudo docker network create zookeeper-kafka --driver bridge 
+    sudo docker network create zookeeper-kafka --driver bridge 
 
 ### 三. 部署zookeeper container
 #### 本教程仅针对不开启KRaft功能的kafka, 如果想要部署一个启用KRaft功能的kafka则不需要部署zookeeper container
 
-sudo docker run -d --name zookeeper &#92; \
---network zookeeper-kafka &#92; \
--e ALLOW_ANONYMOUS_LOGIN=yes &#92; \
-bitnami/zookeeper:latest
+    sudo docker run -d --name zookeeper \
+    --network zookeeper-kafka \
+    -e ALLOW_ANONYMOUS_LOGIN=yes \
+    bitnami/zookeeper:latest
 
 #### PS: 这里的 -e ALLOW_ANONYMOUS_LOGIN=yes 
 向container内注入环境变量 ALLOW_ANONYMOUS_LOGIN 并设值为 yes, 目的是允许匿名客户端绕过认证直接连接, 这仅仅是便于快速开发或测试场景，但不建议在生产环境开启, 本教程这样设置是以个人开发作为主要应用场景, 如果是用作正常的产线使用则需要按照个人需求更改配置.
 
 #### 在部署完成zookeeper container之后可以通过以下指令来验证zookeeper服务是否已经启用
 
-sudo docker logs -f zookeeper
+    sudo docker logs -f zookeeper
 
 如果执行后没有发现有报错则说明已经启用成功
 
@@ -32,42 +32,42 @@ sudo docker logs -f zookeeper
 #### 再次声明!!! 本教程是针对不启用KRaft模式的kafka
 #### 由于kafka的更新迭代, 在 3.7 及以上版本的kafka都会默认启用KRaft模式, 而且无法关闭, 但 3.4 系列仍保留对 zookeeper 的完整支持, 因此这里我们需要部署 3.4 版本的kafka container才能正常的运行
 
-sudo docker run -d --name kafka &#92; \
---network zookeeper-kafka &#92; \
--p 9092:9092 &#92; \
--e ALLOW_PLAINTEXT_LISTENER=yes &#92; \
--e KAFKA_ENABLE_KRAFT=no &#92; \
--e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181 &#92; \
--e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://你虚拟机的IP地址:9092 &#92; \
-bitnami/kafka:3.4
+    sudo docker run -d --name kafka \
+    --network zookeeper-kafka \
+    -p 9092:9092 \
+    -e ALLOW_PLAINTEXT_LISTENER=yes \
+    -e KAFKA_ENABLE_KRAFT=no \
+    -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181 \
+    -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://你虚拟机的IP地址:9092 \
+    bitnami/kafka:3.4
 
 #### 在启用kafka服务之后需要在虚拟机中开放防火墙对9092端口的访问限制
 
-sudo ufw allow 9092/tcp
+    sudo ufw allow 9092/tcp
 
 #### 在部署完成kafka container之后可以通过以下指令来验证kafka服务是否已经启用
 
-sudo docker logs -f kafka
+    sudo docker logs -f kafka
 
 如果执行后没有发现有报错则说明已经启用成功
 
 ### 五. 部署kafka-map可视化管理工具(可选)
 #### 这个管理工具可以用图形化界面来管理kafka, 让调试, 观测, 操作kafka变得更加的简单, 非常的建议安装
 
-sudo docker run -d --name kafka-map &#92; \
---network zookeeper-kafka &#92; \
--p 9001:8080 &#92; \
--v /opt/kafka-map/data:/usr/local/kafka-map/data &#92; \
--e DEFAULT_USERNAME=你自定义的用户名 &#92; \
--e DEFAULT_PASSWORD=你自定义的密码 &#92; \
---restart always dushixiang/kafka-map:latest
+    sudo docker run -d --name kafka-map \
+    --network zookeeper-kafka \
+    -p 9001:8080 \
+    -v /opt/kafka-map/data:/usr/local/kafka-map/data \
+    -e DEFAULT_USERNAME=你自定义的用户名 \
+    -e DEFAULT_PASSWORD=你自定义的密码 \
+    --restart always dushixiang/kafka-map:latest
 
 
 部署完成之后按照以下顺序执行代码, 启用kafka服务:
 
-sudo docker start zookeeper \
-sudo docker start kafka \
-sudo docker start kafka-map 
+    sudo docker start zookeeper 
+    sudo docker start kafka 
+    sudo docker start kafka-map 
 
 之后你可以在你的本地通过
 
